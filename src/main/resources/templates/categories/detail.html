@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <title layout:fragment="title" th:text="'Chi tiết Category: ' + ${category.name}">Chi tiết Category</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>
+                        <i class="fas fa-eye me-2"></i>
+                        Chi tiết Category
+                    </h2>
+                    <p class="text-muted">Xem thông tin chi tiết của category</p>
+                </div>
+                <div class="btn-group">
+                    <a th:href="@{/categories}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại
+                    </a>
+                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Information Card -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tag me-2"></i>
+                        <span th:text="${category.name}">Tên Category</span>
+                    </h5>
+                    <span th:if="${category.active}" class="badge bg-success fs-6">
+                        <i class="fas fa-check-circle me-1"></i>Đang hoạt động
+                    </span>
+                    <span th:unless="${category.active}" class="badge bg-warning fs-6">
+                        <i class="fas fa-pause-circle me-1"></i>Không hoạt động
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Description -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold">
+                                    <i class="fas fa-align-left me-2"></i>Mô tả
+                                </h6>
+                                <div th:if="${category.description != null and !#strings.isEmpty(category.description)}" 
+                                     class="bg-light p-3 rounded">
+                                    <p class="mb-0" th:text="${category.description}">Mô tả category</p>
+                                </div>
+                                <div th:if="${category.description == null or #strings.isEmpty(category.description)}" 
+                                     class="bg-light p-3 rounded">
+                                    <p class="mb-0 text-muted fst-italic">Không có mô tả</p>
+                                </div>
+                            </div>
+
+                            <!-- Basic Information -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold">
+                                        <i class="fas fa-info-circle me-2"></i>Thông tin cơ bản
+                                    </h6>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td class="fw-semibold">ID:</td>
+                                            <td>
+                                                <span class="badge bg-secondary" th:text="${category.id}">1</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Tên:</td>
+                                            <td th:text="${category.name}">Tên Category</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-semibold">Trạng thái:</td>
+                                            <td>
+                                                <span th:if="${category.active}" class="text-success">
+                                                    <i class="fas fa-check-circle me-1"></i>Hoạt động
+                                                </span>
+                                                <span th:unless="${category.active}" class="text-warning">
+                                                    <i class="fas fa-pause-circle me-1"></i>Không hoạt động
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold">
+                                        <i class="fas fa-clock me-2"></i>Thời gian
+                                    </h6>
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td class="fw-semibold">Ngày tạo:</td>
+                                            <td>
+                                                <i class="fas fa-calendar-plus me-1 text-success"></i>
+                                                <span th:text="${#dates.format(category.createdAt, 'dd/MM/yyyy')}"></span>
+                                                <br>
+                                                <small class="text-muted" th:text="${#dates.format(category.createdAt, 'HH:mm:ss')}"></small>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${category.updatedAt != null}">
+                                            <td class="fw-semibold">Cập nhật cuối:</td>
+                                            <td>
+                                                <i class="fas fa-calendar-check me-1 text-primary"></i>
+                                                <span th:text="${#dates.format(category.updatedAt, 'dd/MM/yyyy')}"></span>
+                                                <br>
+                                                <small class="text-muted" th:text="${#dates.format(category.updatedAt, 'HH:mm:ss')}"></small>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${category.updatedAt == null}">
+                                            <td class="fw-semibold">Cập nhật cuối:</td>
+                                            <td class="text-muted fst-italic">Chưa được cập nhật</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Panel -->
+                        <div class="col-md-4">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <h6 class="card-title mb-0">
+                                        <i class="fas fa-tools me-2"></i>Thao tác
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-grid gap-2">
+                                        <!-- Edit -->
+                                        <a th:href="@{/categories/edit/{id}(id=${category.id})}" 
+                                           class="btn btn-primary">
+                                            <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                                        </a>
+
+                                        <!-- Toggle Status -->
+                                        <form th:if="${category.active}" 
+                                              th:action="@{/categories/deactivate/{id}(id=${category.id})}" 
+                                              method="post">
+                                            <button type="submit" class="btn btn-warning w-100"
+                                                    onclick="return confirm('Bạn có chắc muốn vô hiệu hóa category này?')">
+                                                <i class="fas fa-pause me-2"></i>Vô hiệu hóa
+                                            </button>
+                                        </form>
+
+                                        <form th:unless="${category.active}" 
+                                              th:action="@{/categories/activate/{id}(id=${category.id})}" 
+                                              method="post">
+                                            <button type="submit" class="btn btn-success w-100"
+                                                    onclick="return confirm('Bạn có chắc muốn kích hoạt lại category này?')">
+                                                <i class="fas fa-play me-2"></i>Kích hoạt
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete -->
+                                        <hr>
+                                        <form th:action="@{/categories/delete/{id}(id=${category.id})}" 
+                                              method="post">
+                                            <button type="submit" class="btn btn-outline-danger w-100"
+                                                    onclick="return confirm('Bạn có chắc muốn xóa hoàn toàn category này?\n\nHành động này không thể hoàn tác!')">
+                                                <i class="fas fa-trash me-2"></i>Xóa hoàn toàn
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Navigation -->
+                                    <hr>
+                                    <div class="d-grid gap-2">
+                                        <a th:href="@{/categories}" class="btn btn-outline-secondary">
+                                            <i class="fas fa-list me-2"></i>Danh sách Category
+                                        </a>
+                                        <a th:href="@{/categories/add}" class="btn btn-outline-primary">
+                                            <i class="fas fa-plus me-2"></i>Thêm Category mới
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Card -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>Thống kê
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <i class="fas fa-calendar-plus fa-2x text-success mb-2"></i>
+                                <h6 class="mb-1">Ngày tạo</h6>
+                                <small class="text-muted" th:text="${#dates.format(category.createdAt, 'dd/MM/yyyy')}"></small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                                <h6 class="mb-1">Thời gian tồn tại</h6>
+                                <small class="text-muted" 
+                                       th:text="${#dates.daysBetween(category.createdAt, #dates.createNow())} + ' ngày'">0 ngày</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <i th:class="${category.active ? 'fas fa-check-circle fa-2x text-success' : 'fas fa-pause-circle fa-2x text-warning'}" class="mb-2"></i>
+                                <h6 class="mb-1">Trạng thái</h6>
+                                <small th:text="${category.active ? 'Hoạt động' : 'Không hoạt động'}" 
+                                       th:class="${category.active ? 'text-success' : 'text-warning'}">Hoạt động</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="border rounded p-3">
+                                <i class="fas fa-edit fa-2x text-primary mb-2"></i>
+                                <h6 class="mb-1">Lần cập nhật cuối</h6>
+                                <small class="text-muted" 
+                                       th:if="${category.updatedAt != null}"
+                                       th:text="${#dates.format(category.updatedAt, 'dd/MM/yyyy')}">Chưa cập nhật</small>
+                                <small class="text-muted" 
+                                       th:if="${category.updatedAt == null}">Chưa cập nhật</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scroll animation for action buttons
+            const actionButtons = document.querySelectorAll('.btn');
+            actionButtons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+                    this.style.transition = 'all 0.2s ease';
+                });
+                
+                button.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = 'none';
+                });
+            });
+            
+            // Highlight important information
+            const importantElements = document.querySelectorAll('.badge, .text-success, .text-warning, .text-danger');
+            importantElements.forEach(element => {
+                element.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+</div>
+
+</html>

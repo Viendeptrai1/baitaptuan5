@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <title layout:fragment="title">Danh Sách Category</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2><i class="fas fa-list me-2"></i>Danh Sách Category</h2>
+            <p class="text-muted">Quản lý các danh mục trong hệ thống</p>
+        </div>
+        <div class="col-md-6 text-end">
+            <a th:href="@{/categories/add}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Thêm Category Mới
+            </a>
+        </div>
+    </div>
+
+    <!-- Thống kê -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-tags me-2"></i>Tổng số
+                    </h5>
+                    <h3 th:text="${totalElements}">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-check-circle me-2"></i>Đang hoạt động
+                    </h5>
+                    <h3 id="activeCount">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-pause-circle me-2"></i>Không hoạt động
+                    </h5>
+                    <h3 id="inactiveCount">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-file-alt me-2"></i>Trang hiện tại
+                    </h5>
+                    <h3 th:text="${currentPage + 1} + '/' + ${totalPages}">1/1</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tìm kiếm và sắp xếp -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/categories}" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <label for="keyword" class="form-label">Từ khóa tìm kiếm</label>
+                    <input type="text" class="form-control" id="keyword" name="keyword" 
+                           th:value="${keyword}" placeholder="Nhập tên hoặc mô tả...">
+                </div>
+                <div class="col-md-2">
+                    <label for="size" class="form-label">Số lượng/trang</label>
+                    <select class="form-select" id="size" name="size">
+                        <option value="5" th:selected="${size == 5}">5</option>
+                        <option value="10" th:selected="${size == 10}">10</option>
+                        <option value="20" th:selected="${size == 20}">20</option>
+                        <option value="50" th:selected="${size == 50}">50</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="sortBy" class="form-label">Sắp xếp theo</label>
+                    <select class="form-select" id="sortBy" name="sortBy">
+                        <option value="name" th:selected="${sortBy == 'name'}">Tên</option>
+                        <option value="createdAt" th:selected="${sortBy == 'createdAt'}">Ngày tạo</option>
+                        <option value="updatedAt" th:selected="${sortBy == 'updatedAt'}">Ngày cập nhật</option>
+                        <option value="active" th:selected="${sortBy == 'active'}">Trạng thái</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="sortDir" class="form-label">Thứ tự</label>
+                    <select class="form-select" id="sortDir" name="sortDir">
+                        <option value="asc" th:selected="${sortDir == 'asc'}">Tăng dần</option>
+                        <option value="desc" th:selected="${sortDir == 'desc'}">Giảm dần</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                    <a th:href="@{/categories}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo"></i>
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bảng danh sách -->
+    <div class="card">
+        <div class="card-body">
+            <div th:if="${categories.hasContent()}" class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>
+                                <a th:href="@{/categories(keyword=${keyword}, size=${size}, sortBy='id', sortDir=${sortBy == 'id' ? reverseSortDir : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    ID
+                                    <i th:if="${sortBy == 'id'}" 
+                                       th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"
+                                       class="ms-1"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/categories(keyword=${keyword}, size=${size}, sortBy='name', sortDir=${sortBy == 'name' ? reverseSortDir : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Tên Category
+                                    <i th:if="${sortBy == 'name'}" 
+                                       th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"
+                                       class="ms-1"></i>
+                                </a>
+                            </th>
+                            <th>Mô tả</th>
+                            <th>
+                                <a th:href="@{/categories(keyword=${keyword}, size=${size}, sortBy='active', sortDir=${sortBy == 'active' ? reverseSortDir : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Trạng thái
+                                    <i th:if="${sortBy == 'active'}" 
+                                       th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"
+                                       class="ms-1"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a th:href="@{/categories(keyword=${keyword}, size=${size}, sortBy='createdAt', sortDir=${sortBy == 'createdAt' ? reverseSortDir : 'asc'})}"
+                                   class="text-white text-decoration-none">
+                                    Ngày tạo
+                                    <i th:if="${sortBy == 'createdAt'}" 
+                                       th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}"
+                                       class="ms-1"></i>
+                                </a>
+                            </th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="category : ${categories.content}">
+                            <td th:text="${category.id}"></td>
+                            <td>
+                                <strong th:text="${category.name}"></strong>
+                            </td>
+                            <td>
+                                <span th:if="${category.description != null and !#strings.isEmpty(category.description)}"
+                                      th:text="${#strings.abbreviate(category.description, 50)}"></span>
+                                <em th:if="${category.description == null or #strings.isEmpty(category.description)}"
+                                    class="text-muted">Không có mô tả</em>
+                            </td>
+                            <td>
+                                <span th:if="${category.active}" class="badge bg-success">
+                                    <i class="fas fa-check me-1"></i>Hoạt động
+                                </span>
+                                <span th:unless="${category.active}" class="badge bg-warning">
+                                    <i class="fas fa-pause me-1"></i>Không hoạt động
+                                </span>
+                            </td>
+                            <td th:text="${#dates.format(category.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <a th:href="@{/categories/detail/{id}(id=${category.id})}" 
+                                       class="btn btn-sm btn-outline-info" title="Xem chi tiết">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a th:href="@{/categories/edit/{id}(id=${category.id})}" 
+                                       class="btn btn-sm btn-outline-primary" title="Chỉnh sửa">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form th:if="${category.active}" 
+                                          th:action="@{/categories/deactivate/{id}(id=${category.id})}" 
+                                          method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning" 
+                                                title="Vô hiệu hóa"
+                                                onclick="return confirm('Bạn có chắc muốn vô hiệu hóa category này?')">
+                                            <i class="fas fa-pause"></i>
+                                        </button>
+                                    </form>
+                                    <form th:unless="${category.active}" 
+                                          th:action="@{/categories/activate/{id}(id=${category.id})}" 
+                                          method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-success" 
+                                                title="Kích hoạt"
+                                                onclick="return confirm('Bạn có chắc muốn kích hoạt lại category này?')">
+                                            <i class="fas fa-play"></i>
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/categories/delete/{id}(id=${category.id})}" 
+                                          method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                title="Xóa hoàn toàn"
+                                                onclick="return confirm('Bạn có chắc muốn xóa hoàn toàn category này? Hành động này không thể hoàn tác!')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Thông báo khi không có dữ liệu -->
+            <div th:unless="${categories.hasContent()}" class="text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">Không tìm thấy category nào</h5>
+                <p class="text-muted" th:if="${keyword != null and !#strings.isEmpty(keyword)}">
+                    Thử thay đổi từ khóa tìm kiếm hoặc 
+                    <a th:href="@{/categories}" class="text-decoration-none">xóa bộ lọc</a>
+                </p>
+                <a th:href="@{/categories/add}" class="btn btn-primary mt-3">
+                    <i class="fas fa-plus me-2"></i>Thêm Category Đầu Tiên
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Phân trang -->
+    <nav th:if="${totalPages > 1}" aria-label="Category pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <!-- First Page -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/categories(page=0, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+            </li>
+            
+            <!-- Previous Page -->
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/categories(page=${currentPage - 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+            </li>
+            
+            <!-- Page Numbers -->
+            <li th:each="i : ${#numbers.sequence(T(java.lang.Math).max(0, currentPage - 2), T(java.lang.Math).min(totalPages - 1, currentPage + 2))}"
+                class="page-item" th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link" 
+                   th:href="@{/categories(page=${i}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}"
+                   th:text="${i + 1}">1</a>
+            </li>
+            
+            <!-- Next Page -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/categories(page=${currentPage + 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+            </li>
+            
+            <!-- Last Page -->
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                <a class="page-link" 
+                   th:href="@{/categories(page=${totalPages - 1}, size=${size}, sortBy=${sortBy}, sortDir=${sortDir}, keyword=${keyword})}">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+            </li>
+        </ul>
+        
+        <!-- Pagination info -->
+        <div class="text-center mt-2">
+            <small class="text-muted">
+                Hiển thị <strong th:text="${currentPage * size + 1}">1</strong> 
+                đến <strong th:text="${T(java.lang.Math).min((currentPage + 1) * size, totalElements)}">10</strong> 
+                trong tổng số <strong th:text="${totalElements}">100</strong> categories
+            </small>
+        </div>
+    </nav>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tính toán số lượng active và inactive categories
+            const rows = document.querySelectorAll('tbody tr');
+            let activeCount = 0;
+            let inactiveCount = 0;
+            
+            rows.forEach(row => {
+                const statusBadge = row.querySelector('.badge');
+                if (statusBadge && statusBadge.textContent.includes('Hoạt động')) {
+                    activeCount++;
+                } else if (statusBadge && statusBadge.textContent.includes('Không hoạt động')) {
+                    inactiveCount++;
+                }
+            });
+            
+            document.getElementById('activeCount').textContent = activeCount;
+            document.getElementById('inactiveCount').textContent = inactiveCount;
+        });
+    </script>
+</div>
+
+</html>

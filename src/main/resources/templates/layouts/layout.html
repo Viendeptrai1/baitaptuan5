@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE - Category Management">Category Management</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    
+    <block layout:fragment="head"></block>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-primary text-white py-3 shadow-sm">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <!-- Avatar của sinh viên -->
+                    <div class="avatar-circle d-inline-flex align-items-center justify-content-center rounded-circle border border-light"
+                         style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%); color: white; font-weight: bold; font-size: 18px;">
+                        QV
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <h1 class="h3 mb-1">
+                        <i class="fas fa-tags me-2"></i>
+                        Hệ Thống Quản Lý Category
+                    </h1>
+                    <p class="mb-0 small">Ứng dụng quản lý danh mục với Spring Boot & Thymeleaf</p>
+                </div>
+                <div class="col-md-2 text-end">
+                    <div class="d-flex flex-column align-items-end">
+                        <small class="text-light opacity-75">Chào mừng</small>
+                        <strong>Phan Quốc Viễn</strong>
+                        <small class="text-light opacity-75">MSSV: 23110362</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <div class="container">
+            <div class="navbar-nav">
+                <a class="nav-link" th:href="@{/categories}">
+                    <i class="fas fa-list me-1"></i>Danh Sách Category
+                </a>
+                <a class="nav-link" th:href="@{/categories/add}">
+                    <i class="fas fa-plus me-1"></i>Thêm Category
+                </a>
+            </div>
+            
+            <!-- Search form -->
+            <form class="d-flex ms-auto" th:action="@{/categories}" method="get">
+                <input class="form-control me-2" type="search" name="keyword" 
+                       th:value="${keyword}" placeholder="Tìm kiếm category..." 
+                       style="width: 250px;">
+                <button class="btn btn-outline-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-5">
+        <!-- Flash Messages -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${warningMessage}" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${warningMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${infoMessage}" class="alert alert-info alert-dismissible fade show" role="alert">
+            <i class="fas fa-info-circle me-2"></i>
+            <span th:text="${infoMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Page Content -->
+        <div layout:fragment="content">
+            <!-- Default content -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3">
+                        <i class="fas fa-graduation-cap me-2"></i>
+                        Thông Tin Sinh Viên
+                    </h5>
+                    <p class="mb-1">
+                        <strong>Họ và Tên:</strong> Phan Quốc Viễn
+                    </p>
+                    <p class="mb-1">
+                        <strong>MSSV:</strong> 23110362
+                    </p>
+                    <p class="mb-1">
+                        <strong>Lớp:</strong> DH23TT02
+                    </p>
+                    <p class="mb-0">
+                        <strong>Môn học:</strong> Lập trình Java
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="mb-3">
+                        <i class="fas fa-project-diagram me-2"></i>
+                        Thông Tin Dự Án
+                    </h5>
+                    <p class="mb-1">
+                        <strong>Tên dự án:</strong> Category Management System
+                    </p>
+                    <p class="mb-1">
+                        <strong>Công nghệ:</strong> Spring Boot, Thymeleaf, PostgreSQL
+                    </p>
+                    <p class="mb-1">
+                        <strong>Tính năng:</strong> CRUD, Tìm kiếm, Phân trang
+                    </p>
+                    <p class="mb-0">
+                        <strong>Database:</strong> PostgreSQL trên Docker
+                    </p>
+                </div>
+            </div>
+            <hr class="my-3">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0">
+                        <i class="fas fa-copyright me-1"></i>
+                        2024 - Bài tập tuần 5. Được phát triển bởi Phan Quốc Viễn
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar me-1"></i>
+                        Cập nhật lần cuối: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script th:src="@{/js/script.js}"></script>
+    
+    <block layout:fragment="scripts"></block>
+</body>
+</html>

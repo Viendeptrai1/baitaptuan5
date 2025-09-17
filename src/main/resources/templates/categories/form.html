@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/layout}">
+
+<head>
+    <title layout:fragment="title" th:text="${pageTitle}">Form Category</title>
+</head>
+
+<div layout:fragment="content">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2>
+                        <i th:class="${category.id == null ? 'fas fa-plus' : 'fas fa-edit'}" class="me-2"></i>
+                        <span th:text="${pageTitle}">Form Category</span>
+                    </h2>
+                    <p class="text-muted" th:text="${category.id == null ? 'Thêm category mới vào hệ thống' : 'Chỉnh sửa thông tin category'}">
+                        Thêm category mới vào hệ thống
+                    </p>
+                </div>
+                <a th:href="@{/categories}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                </a>
+            </div>
+
+            <!-- Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Thông tin Category
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="${category.id == null ? '/categories/add' : '/categories/edit/' + category.id}" 
+                          th:object="${category}" method="post" novalidate>
+                        
+                        <!-- Tên Category -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-tag me-1"></i>
+                                Tên Category <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"
+                                   id="name" 
+                                   th:field="*{name}" 
+                                   placeholder="Nhập tên category..."
+                                   maxlength="100"
+                                   required>
+                            <div class="form-text">Tên category phải từ 2 đến 100 ký tự</div>
+                            <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback">
+                                <ul class="mb-0">
+                                    <li th:each="error : ${#fields.errors('name')}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Mô tả -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>
+                                Mô tả
+                            </label>
+                            <textarea class="form-control" 
+                                      th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"
+                                      id="description" 
+                                      th:field="*{description}" 
+                                      rows="4" 
+                                      placeholder="Nhập mô tả cho category..."
+                                      maxlength="500"></textarea>
+                            <div class="form-text">
+                                Mô tả tối đa 500 ký tự 
+                                (<span id="charCount">0</span>/500)
+                            </div>
+                            <div th:if="${#fields.hasErrors('description')}" class="invalid-feedback">
+                                <ul class="mb-0">
+                                    <li th:each="error : ${#fields.errors('description')}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Trạng thái -->
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-toggle-on me-1"></i>
+                                Trạng thái
+                            </label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       role="switch" 
+                                       id="active" 
+                                       th:field="*{active}">
+                                <label class="form-check-label" for="active">
+                                    <span th:if="${category.active}" class="text-success">
+                                        <i class="fas fa-check-circle me-1"></i>Category đang hoạt động
+                                    </span>
+                                    <span th:unless="${category.active}" class="text-warning">
+                                        <i class="fas fa-pause-circle me-1"></i>Category không hoạt động
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="form-text">
+                                Chỉ những category đang hoạt động mới hiển thị trong hệ thống
+                            </div>
+                        </div>
+
+                        <!-- Thông tin thêm (nếu đang edit) -->
+                        <div th:if="${category.id != null}" class="mb-4">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Thông tin bổ sung
+                                    </h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <small class="text-muted">
+                                                <strong>ID:</strong> <span th:text="${category.id}"></span>
+                                            </small><br>
+                                            <small class="text-muted">
+                                                <strong>Ngày tạo:</strong> 
+                                                <span th:text="${#dates.format(category.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                                            </small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <small class="text-muted" th:if="${category.updatedAt != null}">
+                                                <strong>Cập nhật lần cuối:</strong>
+                                                <span th:text="${#dates.format(category.updatedAt, 'dd/MM/yyyy HH:mm')}"></span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/categories}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Hủy bỏ
+                            </a>
+                            <div>
+                                <button type="reset" class="btn btn-outline-warning me-2">
+                                    <i class="fas fa-undo me-2"></i>Đặt lại
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i th:class="${category.id == null ? 'fas fa-save' : 'fas fa-edit'}" class="me-2"></i>
+                                    <span th:text="${category.id == null ? 'Thêm Category' : 'Cập nhật Category'}">Lưu</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Preview Card (khi đang edit) -->
+            <div th:if="${category.id != null}" class="card mt-4">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-eye me-2"></i>
+                        Xem trước
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="mb-1" th:text="${category.name}">Tên Category</h5>
+                            <p class="text-muted mb-2" th:if="${category.description != null and !#strings.isEmpty(category.description)}" 
+                               th:text="${category.description}">Mô tả category</p>
+                            <p class="text-muted mb-2" th:if="${category.description == null or #strings.isEmpty(category.description)}">
+                                <em>Không có mô tả</em>
+                            </p>
+                        </div>
+                        <span th:if="${category.active}" class="badge bg-success">
+                            <i class="fas fa-check me-1"></i>Hoạt động
+                        </span>
+                        <span th:unless="${category.active}" class="badge bg-warning">
+                            <i class="fas fa-pause me-1"></i>Không hoạt động
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div layout:fragment="scripts">
+    <script>
+        // Character count for description
+        document.addEventListener('DOMContentLoaded', function() {
+            const descriptionTextarea = document.getElementById('description');
+            const charCountSpan = document.getElementById('charCount');
+            
+            function updateCharCount() {
+                const currentLength = descriptionTextarea.value.length;
+                charCountSpan.textContent = currentLength;
+                
+                if (currentLength > 450) {
+                    charCountSpan.className = 'text-warning';
+                } else if (currentLength > 500) {
+                    charCountSpan.className = 'text-danger';
+                } else {
+                    charCountSpan.className = 'text-muted';
+                }
+            }
+            
+            if (descriptionTextarea) {
+                updateCharCount(); // Initial count
+                descriptionTextarea.addEventListener('input', updateCharCount);
+            }
+            
+            // Toggle status label
+            const activeCheckbox = document.getElementById('active');
+            const statusLabels = document.querySelectorAll('.form-check-label span');
+            
+            if (activeCheckbox && statusLabels.length === 2) {
+                activeCheckbox.addEventListener('change', function() {
+                    statusLabels[0].style.display = this.checked ? 'inline' : 'none';
+                    statusLabels[1].style.display = this.checked ? 'none' : 'inline';
+                });
+            }
+            
+            // Form validation feedback
+            const form = document.querySelector('form');
+            const nameInput = document.getElementById('name');
+            
+            if (form && nameInput) {
+                form.addEventListener('submit', function(e) {
+                    if (nameInput.value.trim().length < 2) {
+                        e.preventDefault();
+                        nameInput.classList.add('is-invalid');
+                        nameInput.focus();
+                    }
+                });
+                
+                nameInput.addEventListener('input', function() {
+                    if (this.value.trim().length >= 2) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            }
+        });
+    </script>
+</div>
+
+</html>
