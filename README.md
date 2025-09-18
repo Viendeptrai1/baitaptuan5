@@ -2,7 +2,7 @@
 
 Ứng dụng quản lý danh mục được phát triển bằng Spring Boot và Thymeleaf.
 
-![Minh họa ứng dụng](minh_hoa.jpg)
+![Minh họa ứng dụng](minh_hoa_co_avt.png)
 
 ## Thông tin sinh viên
 - **Họ tên:** Phan Quốc Viễn
