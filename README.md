@@ -7,7 +7,7 @@
 ## Thông tin sinh viên
 - **Họ tên:** Phan Quốc Viễn
 - **MSSV:** 23110362
-- **Lớp:** DH23TT02
+- **Lớp:** Lap trinh Web_ Nhom 02_CT3_CT4_A112
 
 ## Công nghệ sử dụng
 - **Backend:** Spring Boot 3.5.5, Spring Data JPA
